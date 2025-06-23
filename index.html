@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jenzo's Adventure</title>
+    <style>
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #0f0;
+            margin-bottom: 30px;
+            animation: glitch 1s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+        
+        .escape-button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 15px #0f0;
+        }
+        
+        .escape-button:hover {
+            background: #000;
+            color: #0f0;
+            box-shadow: 0 0 30px #0f0;
+        }
+        
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+        
+        .hidden-message {
+            display: none;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            color: #ff0;
+            text-shadow: 0 0 10px #ff0;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix" id="matrix"></div>
+    <canvas id="confetti-canvas"></canvas>
+    
+    <h1>🚨 Jenzo Fallet Na Stuck sa BSHS 🚨</h1>
+    
+    <div id="game-container">
+        <p>(But he's trying to escape...)</p>
+        <button class="escape-button" id="escape-btn">Help Jenzo Escape!</button>
+    </div>
+    
+    <div class="hidden-message" id="hidden-msg">
+        <p>System Override Successful!</p>
+        <p>Jenzo successfully escaped BSHS</p>
+        <p>...or did he? 🤔</p>
+    </div>
+    
+    <script>
+        // Matrix rain effect
+        const matrix = document.getElementById('matrix');
+        const chars = "01";
+        
+        for (let i = 0; i < 100; i++) {
+            const column = document.createElement('div');
+            column.style.position = 'absolute';
+            column.style.top = `-${Math.random() * 100}%`;
+            column.style.left = `${Math.random() * 100}%`;
+            column.style.width = '15px';
+            column.style.fontSize = '18px';
+            column.style.color = '#0f0';
+            column.style.opacity = Math.random() * 0.5 + 0.1;
+            column.style.animation = `fall ${Math.random() * 3 + 2}s linear infinite`;
+            column.style.animationDelay = `${Math.random() * 5}s`;
+            
+            const numChars = Math.floor(Math.random() * 15) + 10;
+            for (let j = 0; j < numChars; j++) {
+                const char = document.createElement('div');
+                char.textContent = chars[Math.floor(Math.random() * chars.length)];
+                char.style.margin = '4px 0';
+                column.appendChild(char);
+            }
+            
+            matrix.appendChild(column);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fall {
+                    to {
+                        transform: translateY(150vh);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Escape button functionality
+        const escapeBtn = document.getElementById('escape-btn');
+        const gameContainer = document.getElementById('game-container');
+        const hiddenMsg = document.getElementById('hidden-msg');
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        
+        let escapeAttempts = 0;
+        const messages = [
+            "Running diagnostic scan...",
+            "Bypassing security...",
+            "Overriding protocols...",
+            "Decrypting firewalls...",
+            "Redirecting systems...",
+            "Almost there...",
+            "Just a little more..."
+        ];
+        
+        escapeBtn.addEventListener('click', function() {
+            escapeAttempts++;
+            
+            if (escapeAttempts < messages.length) {
+                escapeBtn.textContent = messages[escapeAttempts - 1];
+                escapeBtn.style.animation = "none";
+                escapeBtn.offsetHeight; // Trigger reflow
+                escapeBtn.style.animation = "glitch 0.5s infinite";
+                
+                // Move button to random position
+                const maxX = window.innerWidth - escapeBtn.offsetWidth;
+                const maxY = window.innerHeight - escapeBtn.offsetHeight;
+                escapeBtn.style.position = 'absolute';
+                escapeBtn.style.left = `${Math.random() * maxX}px`;
+                escapeBtn.style.top = `${Math.random() * maxY}px`;
+            } else {
+                // Successful escape!
+                escapeBtn.style.display = 'none';
+                gameContainer.style.display = 'none';
+                hiddenMsg.style.display = 'block';
+                confettiCanvas.style.display = 'block';
+                
+                // Confetti effect
+                const confettiSettings = {
+                    target: 'confetti-canvas',
+                    max: 150,
+                    size: 1.5,
+                    animate: true,
+                    props: ['circle', 'square', 'triangle', 'line'],
+                    colors: [[255,255,0], [255,0,0], [0,255,0], [0,0,255]],
+                    clock: 25,
+                    rotate: true,
+                    start_from_edge: true
+                };
+                
+                const confetti = new ConfettiGenerator(confettiSettings);
+                confetti.render();
+                
+                // Play success sound (if available)
+                try {
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2577/2577-preview.mp3');
+                    audio.volume = 0.2;
+                    audio.play();
+                } catch (e) {
+                    console.log("Couldn't play sound");
+                }
+            }
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+</body>
+</html>
